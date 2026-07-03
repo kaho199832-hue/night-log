@@ -1,0 +1,17 @@
+{
+  "name": "night-crm",
+  "version": "1.0.0",
+  "scripts": {
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && npm install && node index.js",
+    "screenshot": "node screenshot.cjs",
+    "icons": "node generate-icons.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}
