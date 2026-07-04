@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
       if (!tagMap[t.customer_id]) tagMap[t.customer_id] = []
       tagMap[t.customer_id].push(t.tag)
     })
-    res.json(customers.map(c => ({ ...c, bottle_keep: c.bottle_keep || [], tags: tagMap[c.id] || [] })))
+    res.json(customers.map(c => ({ ...c, bottle_keep: Array.isArray(c.bottle_keep) ? c.bottle_keep : [], tags: tagMap[c.id] || [] })))
   } catch (e) {
     console.error(e); res.status(500).json({ error: e.message })
   }
@@ -76,7 +76,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({
       ...customer,
-      bottle_keep: customer.bottle_keep || [],
+      bottle_keep: Array.isArray(customer.bottle_keep) ? customer.bottle_keep : [],
       tags: tags.map(t => t.tag),
       visits: visits.map(v => ({
         ...v,
@@ -161,21 +161,33 @@ router.post('/:id/photo', upload.single('photo'), async (req, res) => {
     let photoUrl
 
     if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
-      // Supabase Storage（本番）
-      const supabase = getSupabase()
-      const ext = path.extname(req.file.originalname)
+      // Supabase Storage REST API直接呼び出し（JSクライアントのヘッダー問題を回避）
+      const buf = req.file.buffer
+      let mime = 'image/jpeg', ext = '.jpg'
+      if (buf[0] === 0x89 && buf[1] === 0x50) { mime = 'image/png'; ext = '.png' }
+      else if (buf[0] === 0xFF && buf[1] === 0xD8) { mime = 'image/jpeg'; ext = '.jpg' }
+      else if (buf[0] === 0x47 && buf[1] === 0x49) { mime = 'image/gif'; ext = '.gif' }
+      else if (buf[0] === 0x52 && buf[1] === 0x49) { mime = 'image/webp'; ext = '.webp' }
       const fileName = `${Date.now()}${ext}`
-      const { error } = await supabase.storage
-        .from('customer-photos')
-        .upload(fileName, req.file.buffer, { contentType: req.file.mimetype })
-      if (error) throw error
-      photoUrl = supabase.storage.from('customer-photos').getPublicUrl(fileName).data.publicUrl
+      const supabaseUrl = process.env.SUPABASE_URL.trim()
+      const serviceKey = process.env.SUPABASE_SERVICE_KEY.replace(/[^\x00-\x7F]/g, '').trim()
+      const uploadRes = await fetch(`${supabaseUrl}/storage/v1/object/customer-photos/${fileName}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': mime, 'apikey': serviceKey },
+        body: buf
+      })
+      if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status} ${await uploadRes.text()}`)
+      photoUrl = `${supabaseUrl}/storage/v1/object/public/customer-photos/${fileName}`
 
       // 古い写真削除
       const { rows } = await pool.query('SELECT photo_url FROM customers WHERE id = $1', [req.params.id])
       const old = rows[0]?.photo_url
       if (old && old.includes('supabase')) {
-        await supabase.storage.from('customer-photos').remove([old.split('/').pop()])
+        const oldName = old.split('/').pop()
+        await fetch(`${supabaseUrl}/storage/v1/object/customer-photos/${oldName}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${serviceKey}`, 'apikey': serviceKey }
+        })
       }
     } else {
       // ローカル保存（開発用）

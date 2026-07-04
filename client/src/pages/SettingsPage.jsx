@@ -4,19 +4,28 @@ import { useTheme } from '../contexts/ThemeContext'
 const UI_COLORS = [
   {
     key: 'bg', label: '背景', description: 'アプリのメイン背景色',
-    presets: ['#0A0A0A','#0F0A1E','#0A0800','#020C18','#0F0008','#111827','#1E1B2E','#FFFFFF','#F9FAFB','#F0F9FF','#FFFBF0','#F8F5FF']
+    presets: [
+      '#0A0A0A','#FFFFFF','#F9FAFB','#FFF8F0','#E8F4FD','#F0FFF4',
+      '#FFF0F5','#FFFDE7','#F3E5F5','#FCE4EC','#E8F5E9','#E3F2FD'
+    ]
   },
   {
     key: 'cardBg', label: 'カード・モーダル', description: 'カードやポップアップの背景',
-    presets: ['#1A1A2E','#1A1030','#1A1500','#1C1917','#1E293B','#262626','#3F3F46','#F3F4F6','#FFFFFF','#EDE9FE','#E0F2FE','#FEF9C3']
+    presets: [
+      '#1C1C1E','#FFFFFF','#F3F4F6','#EDE9FE','#DBEAFE','#DCFCE7',
+      '#FEF3C7','#FFE4E6','#FCE7F3','#E0F2FE','#D1FAE5','#FEF9C3'
+    ]
   },
   {
     key: 'text', label: 'メイン文字', description: '通常テキストの色',
-    presets: ['#FFFFFF','#F3F4F6','#E5E7EB','#D1D5DB','#111827','#1F2937','#374151','#0F172A']
+    presets: ['#FFFFFF','#F3F4F6','#D1D5DB','#FFF8DC','#CFFAFE','#D1FAE5','#111827','#1F2937']
   },
   {
     key: 'accent', label: 'ボタン色', description: 'ボタン・選択状態・ハイライト色',
-    presets: ['#A855F7','#8B5CF6','#6366F1','#3B82F6','#0EA5E9','#06B6D4','#10B981','#F59E0B','#EF4444','#F43F5E','#EC4899','#D4AF37','#C0C0C0','#E2C97E']
+    presets: [
+      '#A855F7','#3B82F6','#0EA5E9','#14B8A6','#10B981','#84CC16',
+      '#F59E0B','#FF6B35','#EF4444','#EC4899','#D4AF37','#C0C0C0'
+    ]
   },
 ]
 
@@ -28,10 +37,10 @@ const VISIT_COLORS = [
 ]
 
 const VISIT_PRESETS = [
-  '#7F77DD','#6366F1','#8B5CF6','#A855F7','#EC4899','#F43F5E',
-  '#EF4444','#F97316','#F59E0B','#EAB308','#22C55E','#10B981',
-  '#06B6D4','#0EA5E9','#3B82F6','#888780','#71717A','#F0997B',
-  '#D4AF37','#C0C0C0'
+  '#7F77DD','#A855F7','#EC4899','#EF4444','#FF6B35','#F59E0B',
+  '#EAB308','#22C55E','#10B981','#14B8A6','#0EA5E9','#3B82F6',
+  '#888780','#F0997B','#D4AF37','#C0C0C0','#9E9E9E','#FF1493',
+  '#00CED1','#7CFC00'
 ]
 
 function UiColorRow({ config, value, onChange }) {

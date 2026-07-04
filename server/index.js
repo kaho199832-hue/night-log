@@ -9,6 +9,10 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, req.body ? JSON.stringify(req.body).slice(0, 200) : '')
+  next()
+})
 
 // ローカル開発時のみ uploads を静的配信
 if (process.env.NODE_ENV !== 'production') {

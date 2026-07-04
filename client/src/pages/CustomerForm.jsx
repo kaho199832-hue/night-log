@@ -70,7 +70,7 @@ export default function CustomerForm({ customer, onClose, onSave }) {
       onSave(id)
       onClose()
     } catch (e) {
-      alert('保存に失敗しました')
+      alert('保存に失敗しました: ' + (e?.message || String(e)))
     } finally {
       setSaving(false)
     }
@@ -106,7 +106,7 @@ export default function CustomerForm({ customer, onClose, onSave }) {
             onClick={() => fileRef.current?.click()}
             style={{ background: 'none', border: 'none', color: theme.accent, fontSize: 13, cursor: 'pointer' }}
           >写真を選択 / カメラで撮影</button>
-          <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handlePhoto} style={{ display: 'none' }} />
+          <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
         </div>
 
         {/* 基本情報 */}

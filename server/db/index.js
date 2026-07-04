@@ -80,6 +80,9 @@ async function initDb() {
     )
   }
 
+  // 壊れたbottle_keep（{}形式）を[]に修正
+  await pool.query(`UPDATE customers SET bottle_keep = '[]' WHERE jsonb_typeof(bottle_keep) != 'array'`)
+
   console.log('DB ready')
 }
 
