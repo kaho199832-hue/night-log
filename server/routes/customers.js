@@ -101,7 +101,7 @@ router.post('/', async (req, res) => {
     const { rows } = await pool.query(`
       INSERT INTO customers (name, name_kana, birthday, occupation, line_url, favorite_drinks, disliked, color, memo, bottle_keep, area, receipt_name)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id
-    `, [name, name_kana, birthday, occupation, line_url, favorite_drinks, disliked, color || '#7F77DD', memo, bottle_keep || [], area, receipt_name])
+    `, [name, name_kana, birthday, occupation, line_url, favorite_drinks, disliked, color || '#7F77DD', memo, JSON.stringify(bottle_keep || []), area, receipt_name])
 
     const customerId = rows[0].id
     if (tags?.length > 0) {
@@ -121,7 +121,7 @@ router.put('/:id', async (req, res) => {
     await pool.query(`
       UPDATE customers SET name=$1, name_kana=$2, birthday=$3, occupation=$4, line_url=$5,
       favorite_drinks=$6, disliked=$7, color=$8, memo=$9, bottle_keep=$10, area=$11, receipt_name=$12 WHERE id=$13
-    `, [name, name_kana, birthday, occupation, line_url, favorite_drinks, disliked, color || '#7F77DD', memo, bottle_keep || [], area, receipt_name, req.params.id])
+    `, [name, name_kana, birthday, occupation, line_url, favorite_drinks, disliked, color || '#7F77DD', memo, JSON.stringify(bottle_keep || []), area, receipt_name, req.params.id])
 
     if (tags !== undefined) {
       await pool.query('DELETE FROM name_tags WHERE customer_id = $1', [req.params.id])
